@@ -27,8 +27,8 @@ def read_and_transform(config, long_fmt='360'):
     data_in = xr.open_dataset(config['filename'])[[v1, v2]]
     
     if long_fmt == '360':
-        data_in = data_in.sel(lon=slice(config['wlon'], config['elon']), 
-                              lat=slice(config['nlat'], config['slat']))
+        data_in = data_in.sel(longitude=slice(config['wlon'], config['elon']), 
+                              latitude=slice(config['nlat'], config['slat']))
     else:
         raise ValueError("-180 to 180 not implemented yet, use 0-360")
         
@@ -102,7 +102,7 @@ def train_som(preferences):
 
     scaled_npy = scaler.transform(npy)
 
-    preferences['som_config']['input_len'] = 2 * ds.sizes['lon'] * ds.sizes['lat']
+    preferences['som_config']['input_len'] = 2 * ds.sizes['longitude'] * ds.sizes['latitude']
     preferences['som_train']['data'] = scaled_npy
     
     print("current model configuration")
