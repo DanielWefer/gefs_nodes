@@ -30,10 +30,15 @@ def read_and_transform(config, long_fmt='360'):
     data_in = xr.open_dataset(config['filename'])[[v1, v2]]
     
     if long_fmt == '360':
-        data_in = data_in.sel(lon=slice(config['wlon'], config['elon']), 
+        # data already uses 0..360 longitudes
+        data_in = data_in.sel(lon=slice(config['wlon'], config['elon']),
                               lat=slice(config['nlat'], config['slat']))
     else:
-        raise ValueError("-180 to 180 not implemented yet, use 0-360")
+        # convert from -180..180 to 0..360, then sort so slicing works
+        data_in['lon'] = (data_in['lon'] + 360) % 360
+        data_in = data_in.sortby('lon')
+        data_in = data_in.sel(lon=slice(config['wlon'], config['elon']),
+                              lat=slice(config['nlat'], config['slat']))
         
     data_in = data_in.squeeze()
 
@@ -116,4 +121,4 @@ def train_som(preferences):
     som = MiniSom(**preferences['som_config'])
     som.train(**preferences['som_train'])
 
-    return som, scaler, preferences, ds
+    return som, scaler, preferences, ds, scaled_npy
