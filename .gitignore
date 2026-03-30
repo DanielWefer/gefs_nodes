@@ -208,7 +208,7 @@ __marimo__/
 
 # Project-specific or data files
 .nc
-.png
+*.png
 .csv
 Datasets/
-figures/
+Figures/
